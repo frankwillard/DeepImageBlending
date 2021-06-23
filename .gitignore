@@ -1,6 +1,6 @@
 # Results files
-./results/
-./results_copy/
+results/
+results_copy/
 
 # Cache/system files
 **/__pycache__
