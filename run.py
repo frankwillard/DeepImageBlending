@@ -1,4 +1,5 @@
 # Packages
+import os
 import pdb
 import numpy as np
 import torch
@@ -20,6 +21,7 @@ parser.add_argument('--x', type=int, default=200, help='vertical location')
 parser.add_argument('--y', type=int, default=235, help='vertical location')
 parser.add_argument('--gpu_id', type=int, default=0, help='GPU ID')
 parser.add_argument('--num_steps', type=int, default=1000, help='Number of iterations in each pass')
+parser.add_argument('--results_dir', type=str, default='./results/', help='Location to save results')
 
 opt = parser.parse_args()
 
@@ -31,6 +33,9 @@ opt = parser.parse_args()
 source_file = opt.source_file
 mask_file = opt.mask_file
 target_file = opt.target_file
+results_dir = opt.results_dir
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
 
 # Hyperparameter Inputs
 gpu_id = opt.gpu_id
@@ -152,7 +157,11 @@ blend_img_np = blend_img.transpose(1,3).transpose(1,2).cpu().data.numpy()[0]
 
 # Save image from the first pass
 name = source_file.split('/')[1].split('_')[0]
-imsave('results/'+str(name)+'_first_pass.png', blend_img_np.astype(np.uint8))
+blend_img_save_path = os.path.join(results_dir, '_'.join([str(name), '_first_pass.png']))
+imsave(
+    blend_img_save_path,
+    blend_img_np.astype(np.uint8)
+)
 
 
 
@@ -165,7 +174,7 @@ style_weight = 1e7; content_weight = 1; tv_weight = 1e-6
 ss = 512; ts = 512
 num_steps = opt.num_steps
 
-first_pass_img_file = 'results/'+str(name)+'_first_pass.png'
+first_pass_img_file = blend_img_save_path
 first_pass_img = np.array(Image.open(first_pass_img_file).convert('RGB').resize((ss, ss)))
 target_img = np.array(Image.open(target_file).convert('RGB').resize((ts, ts)))
 first_pass_img = torch.from_numpy(first_pass_img).unsqueeze(0).transpose(1,3).transpose(2,3).float().to(gpu_id)
@@ -225,7 +234,10 @@ first_pass_img.data.clamp_(0, 255)
 input_img_np = first_pass_img.transpose(1,3).transpose(1,2).cpu().data.numpy()[0]
 
 # Save image from the second pass
-imsave('results/'+str(name)+'_second_pass.png', input_img_np.astype(np.uint8))
+imsave(
+    os.path.join(results_dir, '_'.join([str(name), '_second_pass.png'])),
+    input_img_np.astype(np.uint8)
+)
 
 
 
