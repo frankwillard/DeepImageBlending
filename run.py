@@ -3,7 +3,7 @@ import os
 import pdb
 import numpy as np
 import torch
-import torch.optim as optim
+from lbfgs import LBFGS
 from PIL import Image
 import matplotlib.pyplot as plt
 from skimage.io import imsave
@@ -71,7 +71,7 @@ mask_img = mask_img.squeeze(0).repeat(3,1).view(3,ss,ss).unsqueeze(0)
 
 # Define LBFGS optimizer
 def get_input_optimizer(input_img):
-    optimizer = optim.LBFGS([input_img.requires_grad_()])
+    optimizer = LBFGS([input_img.requires_grad_()])
     return optimizer
 optimizer = get_input_optimizer(input_img)
 
@@ -182,7 +182,7 @@ target_img = torch.from_numpy(target_img).unsqueeze(0).transpose(1,3).transpose(
 
 # Define LBFGS optimizer
 def get_input_optimizer(first_pass_img):
-    optimizer = optim.LBFGS([first_pass_img.requires_grad_()])
+    optimizer = LBFGS([first_pass_img.requires_grad_()])
     return optimizer
 
 optimizer = get_input_optimizer(first_pass_img)
