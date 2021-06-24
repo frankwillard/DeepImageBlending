@@ -159,7 +159,7 @@ blend_img_np = blend_img.transpose(1,3).transpose(1,2).cpu().data.numpy()[0]
 # Save image from the first pass
 name = source_file.split('/')[1].split('_')[0]
 
-if not args.results_fname:
+if not opt.results_fname:
   fname = str(name)
 else:
   fname = opt.results_fname
