@@ -22,6 +22,7 @@ parser.add_argument('--y', type=int, default=235, help='vertical location')
 parser.add_argument('--gpu_id', type=int, default=0, help='GPU ID')
 parser.add_argument('--num_steps', type=int, default=1000, help='Number of iterations in each pass')
 parser.add_argument('--results_dir', type=str, default='./results/', help='Location to save results')
+parser.add_argument('--results_fname', type=str, default='', help='File name to save results')
 
 opt = parser.parse_args()
 
@@ -157,7 +158,14 @@ blend_img_np = blend_img.transpose(1,3).transpose(1,2).cpu().data.numpy()[0]
 
 # Save image from the first pass
 name = source_file.split('/')[1].split('_')[0]
-blend_img_save_path = os.path.join(results_dir, '_'.join([str(name), '_first_pass.png']))
+
+if not args.results_fname:
+  fname = str(name)
+else:
+  fname = opt.results_fname
+  
+blend_img_save_path = os.path.join(results_dir, '_'.join([fname, '_first_pass.png']))
+
 imsave(
     blend_img_save_path,
     blend_img_np.astype(np.uint8)
@@ -235,7 +243,7 @@ input_img_np = first_pass_img.transpose(1,3).transpose(1,2).cpu().data.numpy()[0
 
 # Save image from the second pass
 imsave(
-    os.path.join(results_dir, '_'.join([str(name), '_second_pass.png'])),
+    os.path.join(results_dir, '_'.join([fname, '_second_pass.png'])),
     input_img_np.astype(np.uint8)
 )
 
